@@ -1,14 +1,14 @@
-import React from "react";
 import {
   PaymentElement,
+  useElements,
   useStripe,
-  useElements
 } from "@stripe/react-stripe-js";
+import { Layout } from "@stripe/stripe-js";
+import React from "react";
 
 export default function CheckoutForm() {
   const stripe = useStripe();
   const elements = useElements();
-
 
   const [message, setMessage] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -77,14 +77,14 @@ export default function CheckoutForm() {
     setIsLoading(false);
   };
 
-  const paymentElementOptions = {
-    layout: "tabs",
-  };
+  const paymentElementOptions: Layout = "tabs";
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
+      <PaymentElement
+        id="payment-element"
+        options={{ layout: paymentElementOptions }}
+      />
       <button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
           {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
