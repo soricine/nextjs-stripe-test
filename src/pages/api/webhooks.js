@@ -57,6 +57,9 @@ const webhookHandler = async (req, res) => {
         console.log(`Charge id: ${charge.id}`);
         break;
       }
+      case 'submit-form-api': {
+        console.log('yo');
+      }
       default: {
         console.warn(`Unhandled event type: ${event.type}`);
         break;
