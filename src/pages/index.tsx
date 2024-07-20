@@ -1,6 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import process from "process" ;
+
 
 import CheckoutForm from "./components/CheckoutForm";
 
@@ -10,9 +12,9 @@ import CheckoutForm from "./components/CheckoutForm";
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function App() {
-  const [clientSecret, setClientSecret] = React.useState("");
+  const [clientSecret, setClientSecret] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     fetch("/api/create-payment-intent", {
       method: "POST",

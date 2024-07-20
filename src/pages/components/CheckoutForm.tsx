@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   PaymentElement,
   useStripe,
@@ -10,10 +10,10 @@ export default function CheckoutForm() {
   const elements = useElements();
 
 
-  const [message, setMessage] = React.useState(null);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [message, setMessage] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!stripe) {
       return;
     }

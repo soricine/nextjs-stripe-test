@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { buffer } from 'micro';
 import Cors from 'micro-cors';
+import process from "process";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -57,9 +58,9 @@ const webhookHandler = async (req, res) => {
         console.log(`Charge id: ${charge.id}`);
         break;
       }
-      case 'submit-form-api': {
-        console.log('yo');
-      }
+      // case 'submit-form-api': {
+      //   console.log('yo');
+      // }
       default: {
         console.warn(`Unhandled event type: ${event.type}`);
         break;
