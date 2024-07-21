@@ -1,6 +1,11 @@
 export type Item = {
-    id: string;
+  id: string
 }
+export type StripePurchaseData = {
+  items: Item[]
+}
+
 export type RegistrationData = {
-    items: Item[];
+  email: string
+  username: string
 }
