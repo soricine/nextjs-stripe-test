@@ -1,16 +1,35 @@
 import React, { useState } from 'react'
-// import LabelInput from "./LabelInput" ;
+import LabelInput from './LabelInput'
 import { RegistrationData } from '../types'
+import { Button } from '@/components/ui/Button'
+import { ReloadIcon } from '@radix-ui/react-icons'
+import { delay } from '@/lib/delay'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Form } from './ui/Form'
+
+const formSchema = z.object({
+  username: z.string().min(2).max(50),
+})
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = async () => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: '',
+    },
+  })
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setSubmitted(false)
     setSubmitError(false)
     setIsLoading(true)
+    // await delay(2000)
 
     const data: RegistrationData = { items: [{ id: 'xl-tshirt' }] }
     const result = await fetch('/api/register', {
@@ -34,18 +53,21 @@ export default function SubmitForm() {
     <div>
       {submitted && <div>ThankU</div>}
       {submitError && <div>Error !!!</div>}
-      <form>
-        {/* Form() */}
-        <button disabled={isLoading} id="submit" onClick={handleSubmit}>
-          <span id="button-text">
-            {isLoading ? (
-              <div className="spinner" id="spinner"></div>
-            ) : (
-              'Submit'
-            )}
-          </span>
-        </button>
-      </form>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <LabelInput
+            name="username"
+            description="insert your username"
+            label="Username"
+            placeholder="qwe123"
+            control={form.control}
+          ></LabelInput>
+          <Button disabled={isLoading} type="submit">
+            {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
+            Submit
+          </Button>
+        </form>
+      </Form>
     </div>
   )
 }
