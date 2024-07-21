@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import LabelInput from './LabelInput'
-import { RegistrationData } from '../types'
 import { Button } from '@/components/ui/button'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import { delay } from '@/lib/delay'
@@ -8,26 +7,22 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form } from './ui/Form'
-
-const formSchema = z.object({
-  username: z.string().min(2).max(50),
-  email: z.string().min(1, 'You must privide an email address').email(),
-})
+import { registrationFormSchema } from '@/validations/registration'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof registrationFormSchema>>({
+    resolver: zodResolver(registrationFormSchema),
     defaultValues: {
       username: '',
       email: '',
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof registrationFormSchema>) => {
     setSubmitted(false)
     setSubmitError(false)
     setIsLoading(true)
