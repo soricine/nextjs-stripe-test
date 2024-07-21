@@ -3,47 +3,42 @@
 // import Stripe from "stripe" ;
 
 import { NextApiRequest, NextApiResponse } from 'next'
-import { IsArray, IsString, validateOrReject } from 'class-validator'
-// const stripe = Stripe (process.env.STRIPE_SECRET_KEY);
-
-// const calculateOrderAmount = (items) => {
-//    Replace this constant with a calculation of the order's amount
-//    Calculate the order total on the server to prevent
-//    people from directly manipulating the amount on the client
-//   return 1400;
-// };
-
-class Item {
-  @IsString()
-  id!: string
-}
-
-class RegistrationData {
-  @IsArray()
-  items!: Item[]
-}
+import { RegistrationData } from '@/types'
+import { registrationFormSchema } from '@/validations/registration'
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const requestBody = new RegistrationData()
-  const { items } = req.body
+  if (req.method !== 'POST') {
+    return res
+      .setHeader('Allow', ['POST'])
+      .status(405)
+      .json({
+        status: 'error',
+        error: 'method_not_allowed',
+        description: `Method ${req.method} not allowed`,
+      })
+  }
 
-  requestBody.items = items
+  const response = registrationFormSchema.safeParse(req.body)
 
-  try {
-    await validateOrReject(requestBody)
-    return res.json({
-      status: 'success',
-      description: 'data was ook',
-      data: requestBody,
-    })
-  } catch {
+  if (!response.success) {
+    const { errors } = response.error
+
     return res.status(400).json({
       status: 'error',
       error: 'invalid_input',
       description: 'expected an array of items string id',
+      errors,
     })
   }
+
+  const registrationData = response.data as RegistrationData
+
+  return res.json({
+    status: 'success',
+    description: 'data was ook',
+    data: registrationData,
+  })
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import LabelInput from './LabelInput'
 import { RegistrationData } from '../types'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@/components/ui/button'
 import { ReloadIcon } from '@radix-ui/react-icons'
 import { delay } from '@/lib/delay'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -11,6 +11,7 @@ import { Form } from './ui/Form'
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
+  email: z.string().min(1, 'You must privide an email address').email(),
 })
 
 export default function SubmitForm() {
@@ -22,6 +23,7 @@ export default function SubmitForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: '',
+      email: '',
     },
   })
 
@@ -31,11 +33,10 @@ export default function SubmitForm() {
     setIsLoading(true)
     // await delay(2000)
 
-    const data: RegistrationData = { items: [{ id: 'xl-tshirt' }] }
     const result = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(values),
     })
     if (result.status !== 200) {
       setSubmitError(true)
@@ -51,7 +52,7 @@ export default function SubmitForm() {
 
   return (
     <div>
-      {submitted && <div>ThankU</div>}
+      {submitted && <div>Thank for Submit</div>}
       {submitError && <div>Error !!!</div>}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -60,6 +61,13 @@ export default function SubmitForm() {
             description="insert your username"
             label="Username"
             placeholder="qwe123"
+            control={form.control}
+          ></LabelInput>
+          <LabelInput
+            name="email"
+            description="insert your Email"
+            label="Email"
+            placeholder="example@email.com"
             control={form.control}
           ></LabelInput>
           <Button disabled={isLoading} type="submit">
