@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 // import LabelInput from "./LabelInput" ;
-import { RegistrationData } from '../../types'
+import { RegistrationData } from '../types'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)

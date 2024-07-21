@@ -4,7 +4,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import process from "process" ;
 
 
-import CheckoutForm from "./components/CheckoutForm";
+import CheckoutForm from "../components/CheckoutForm";
 
 // Make sure to call loadStripe outside of a component’s render to avoid
 // recreating the Stripe object on every render.
