@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form } from './ui/Form'
-import { registrationFormSchema } from '@/validations/registration'
+import { registrationFormSchema } from '@/validations/signin'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -19,6 +19,8 @@ export default function SubmitForm() {
     defaultValues: {
       username: '',
       email: '',
+      password: '',
+      confirmPassword: '',
     },
   })
 
@@ -28,7 +30,7 @@ export default function SubmitForm() {
     setIsLoading(true)
     // await delay(2000)
 
-    const result = await fetch('/api/register-api', {
+    const result = await fetch('/api/signin-api', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
@@ -47,7 +49,7 @@ export default function SubmitForm() {
 
   return (
     <div>
-      {submitted && <div>Thank for Submit</div>}
+      {submitted && <div>Thank for SignIn</div>}
       {submitError && <div>Error !!!</div>}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -55,7 +57,7 @@ export default function SubmitForm() {
             name="username"
             description="insert your username"
             label="Username"
-            placeholder="qwe123"
+            placeholder="user_name"
             control={form.control}
           ></LabelInput>
           <LabelInput
@@ -63,6 +65,20 @@ export default function SubmitForm() {
             description="insert your Email"
             label="Email"
             placeholder="example@email.com"
+            control={form.control}
+          ></LabelInput>
+          <LabelInput
+            name="password"
+            description="insert your Password"
+            label="Password"
+            placeholder="123qwe"
+            control={form.control}
+          ></LabelInput>
+          <LabelInput
+            name="confirmPassword"
+            description="insert again the same Password"
+            label="Confirm Password"
+            placeholder="Same as Password"
             control={form.control}
           ></LabelInput>
           <Button disabled={isLoading} type="submit">

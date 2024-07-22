@@ -14,11 +14,22 @@ export type Props = {
   label?: string
   name?: string
   placeholder?: string
+  password?: string
+  confirmPassword?: string
   control: any
 }
 
 export default function LabelInput(params: Props) {
-  const { description, name, label, placeholder, control, ...props } = params
+  const {
+    description,
+    name,
+    label,
+    password,
+    confirmPassword,
+    placeholder,
+    control,
+    ...props
+  } = params
   return (
     <FormField
       control={control}
