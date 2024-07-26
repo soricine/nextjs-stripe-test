@@ -4,7 +4,8 @@
 
 import { NextApiRequest, NextApiResponse } from 'next'
 import { RegistrationData } from '@/types'
-import { registrationFormSchema } from '@/validations/registration'
+import { registrationFormSchema } from '@/validations/registrationSchema'
+import { prisma } from '@/database/client'
 
 export default async function handler(
   req: NextApiRequest,
@@ -35,10 +36,16 @@ export default async function handler(
   }
 
   const registrationData = response.data as RegistrationData
-
+  //prisma must be in a new function
+  const user = await prisma.user.create({
+    data: {
+      email: registrationData.email,
+      password: registrationData.password,
+    },
+  })
   return res.json({
     status: 'success',
     description: 'data was ook',
-    data: registrationData,
+    data: user,
   })
 }

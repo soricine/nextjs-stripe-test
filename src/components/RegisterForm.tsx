@@ -7,9 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form } from './ui/Form'
-import { registrationFormSchema } from '@/validations/signin'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { registrationFormSchema } from '@/validations/registrationSchema'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -21,42 +19,37 @@ export default function SubmitForm() {
     defaultValues: {
       email: '',
       password: '',
+      confirmPassword: '',
     },
   })
-  const router = useRouter()
+
   const onSubmit = async (values: z.infer<typeof registrationFormSchema>) => {
     setSubmitted(false)
     setSubmitError(false)
     setIsLoading(true)
     // await delay(2000)
 
-    const result = await fetch('/api/signin', {
+    const result = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
     })
     if (result.status !== 200) {
-      const resultJson = await result.json()
-
-      console.log(resultJson)
       setSubmitError(true)
       setIsLoading(false)
       return
     }
     const resultJson = await result.json()
-    const token = resultJson.data.token
-    // console.log(token)
-    localStorage.setItem('OAuthToken', token)
     console.log(resultJson)
 
     setSubmitted(true)
     setIsLoading(false)
     form.reset()
-    router.push('/account')
   }
 
   return (
     <div>
+      {submitted && <div>Thank for Register</div>}
       {submitError && <div>Error !!!</div>}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -74,8 +67,14 @@ export default function SubmitForm() {
             placeholder="123qwe"
             control={form.control}
           ></LabelInput>
+          <LabelInput
+            name="confirmPassword"
+            description="insert again the same Password"
+            label="Confirm Password"
+            placeholder="Same as Password"
+            control={form.control}
+          ></LabelInput>
           <Button disabled={isLoading} type="submit">
-            {/* <Link href="/account" passHref={true}></Link> */}
             {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
             Submit
           </Button>

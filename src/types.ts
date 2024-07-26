@@ -7,5 +7,15 @@ export type StripePurchaseData = {
 
 export type RegistrationData = {
   email: string
-  username: string
+  password: string
+}
+
+export type OAuthTokenData = {
+  token: string
+  expiresAt: Date
+  userId: string
+}
+
+export type VerifyUserLoginApiData = {
+  token: string
 }
