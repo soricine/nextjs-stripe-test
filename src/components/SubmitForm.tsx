@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form } from './ui/Form'
-import { registrationFormSchema } from '@/validations/registration'
+import { registrationFormSchema } from '@/validations/submit'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -17,7 +17,6 @@ export default function SubmitForm() {
   const form = useForm<z.infer<typeof registrationFormSchema>>({
     resolver: zodResolver(registrationFormSchema),
     defaultValues: {
-      username: '',
       email: '',
     },
   })
@@ -28,7 +27,7 @@ export default function SubmitForm() {
     setIsLoading(true)
     // await delay(2000)
 
-    const result = await fetch('/api/register-api', {
+    const result = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
@@ -43,6 +42,7 @@ export default function SubmitForm() {
 
     setSubmitted(true)
     setIsLoading(false)
+    form.reset()
   }
 
   return (
@@ -51,13 +51,6 @@ export default function SubmitForm() {
       {submitError && <div>Error !!!</div>}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <LabelInput
-            name="username"
-            description="insert your username"
-            label="Username"
-            placeholder="qwe123"
-            control={form.control}
-          ></LabelInput>
           <LabelInput
             name="email"
             description="insert your Email"
