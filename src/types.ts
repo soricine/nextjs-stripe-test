@@ -1,3 +1,5 @@
+import { OAuthToken, User } from '@prisma/client'
+
 export type Item = {
   id: string
 }
@@ -18,4 +20,8 @@ export type OAuthTokenData = {
 
 export type VerifyUserLoginApiData = {
   token: string
+}
+
+export type OAuthTokenWithUser = OAuthToken & {
+  user: Partial<User>
 }

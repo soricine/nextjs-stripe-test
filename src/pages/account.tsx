@@ -7,6 +7,7 @@ export default function AccountProfile() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [token, setToken] = useState('')
+  const [userEmail, setUserEmail] = useState('')
 
   const getIsLoggedIn = async (): Promise<void> => {
     const token = localStorage.getItem('OAuthToken')
@@ -17,11 +18,9 @@ export default function AccountProfile() {
       return
     }
     setToken(token)
-    const values = { token }
     const result = await fetch('/api/account', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
+      method: 'GET',
+      headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },
     })
     if (result.status !== 200) {
       setIsLoggedIn(false)
@@ -29,6 +28,8 @@ export default function AccountProfile() {
       router.replace('/signin')
       return
     }
+    const resultJson = await result.json()
+    setUserEmail(resultJson.data.user.email)
     setIsLoggedIn(true)
     setIsLoading(false)
   }
@@ -37,11 +38,9 @@ export default function AccountProfile() {
   }, [])
 
   const logout = async () => {
-    const values = { token }
     const result = await fetch('/api/account', {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
+      headers: { Accept: 'application/json', Authorization: `Bearer ${token}` },
     })
     localStorage.removeItem('OAuthToken')
     router.push('/signin')
@@ -63,7 +62,7 @@ export default function AccountProfile() {
   return (
     <div>
       <div>
-        <b>Account Profile Page</b>
+        <b>Account {userEmail} Page</b>
         <br />
         <br />
       </div>
