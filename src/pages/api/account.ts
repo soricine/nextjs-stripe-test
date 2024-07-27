@@ -1,29 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { VerifyUserLoginApiData } from '@/types'
-import { verififyLogoinSchema } from '@/validations/account'
 import { prisma } from '@/database/client'
+import { getOAuthTokenFromHttpRequest } from '@/utils/server/getOAuthTokenFromHttpRequest'
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const response = verififyLogoinSchema.safeParse(req.body)
-  const verifyUserLoginApiData = response.data as VerifyUserLoginApiData
-
-  if (req.method == 'POST') {
-    const oauth = await prisma.oAuthToken.findFirst({
-      where: {
-        token: verifyUserLoginApiData.token,
-        expiresAt: {
-          gte: new Date(),
-        },
-      },
-    })
-
-    if (!oauth) {
+  if (req.method == 'GET') {
+    const oAuthToken = await getOAuthTokenFromHttpRequest(req)
+    if (!oAuthToken) {
       return res.status(401).json({
         status: 'error',
         error: 'unauthorized',
-        description: 'invalid username or password',
+        description: 'invalid oauth token',
       })
     }
 
@@ -31,21 +20,32 @@ export default async function handler(
       status: 'success',
       description: 'data was ook',
       data: {
-        token: oauth.token,
-        expiresAt: oauth.expiresAt,
+        token: oAuthToken.token,
+        expiresAt: oAuthToken.expiresAt,
+        user: {
+          email: oAuthToken.user.email,
+        },
       },
     })
   }
   if (req.method == 'DELETE') {
+    const oAuthToken = await getOAuthTokenFromHttpRequest(req)
+    if (!oAuthToken) {
+      return res.status(401).json({
+        status: 'error',
+        error: 'unauthorized',
+        description: 'invalid oauth token',
+      })
+    }
     await prisma.oAuthToken.delete({
       where: {
-        token: verifyUserLoginApiData.token,
+        token: oAuthToken.token,
       },
     })
     return res.send('')
   }
   return res
-    .setHeader('Allow', ['POST'])
+    .setHeader('Allow', ['DELETE', 'GET'])
     .status(405)
     .json({
       status: 'error',
