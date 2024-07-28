@@ -3,6 +3,28 @@
 Build a simple checkout form to collect payment details. Included are some basic
 build and run scripts you can use to start up the application.
 
+## Configuration 
+
+You must copy the `.env.example` to `.env`
+
+```console
+cp .env.example .env
+```
+
+Then you must set this three variables to match the settingas
+
+* `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+* `STRIPE_SECRET_KEY`
+* `DATABASE_URL`
+
+The first two variables can be found in the dev portal of [stripe.com](https://stripe.com)
+
+The `DATABASE_URL` should be a local file path to sqlite3 database, for exapmle: 
+
+```
+DATABASE_URL="file:./dev.db"
+```
+
 ## Running the sample
 
 ### Development
