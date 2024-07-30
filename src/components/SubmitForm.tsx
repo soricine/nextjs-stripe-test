@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form } from './ui/Form'
 import { registrationFormSchema } from '@/validations/submit'
+import Link from 'next/link'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -61,7 +62,9 @@ export default function SubmitForm() {
           <Button disabled={isLoading} type="submit">
             {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
             Submit
-          </Button>
+          </Button>{' '}
+          <br />
+          <Link href="signin">Sign In</Link>
         </form>
       </Form>
     </div>

@@ -7,6 +7,7 @@ import { RegistrationData } from '@/types'
 import { registrationFormSchema } from '@/validations/signin'
 import { prisma } from '@/database/client'
 import { v4 as uuidv4 } from 'uuid'
+import { isPasswordValid } from '@/utils/server/isPasswordValid'
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -40,10 +41,23 @@ export default async function handler(
   const user = await prisma.user.findFirst({
     where: {
       email: registrationData.email,
-      password: registrationData.password,
     },
   })
   if (!user) {
+    return res.status(401).json({
+      status: 'error',
+      error: 'unauthorized',
+      description: 'invalid username or password',
+    })
+  }
+
+  const isValid = await isPasswordValid({
+    password: response.data.password,
+    salt: user.passwordSalt,
+    hashedPassword: user.hashedPassword,
+  })
+
+  if (isValid === false) {
     return res.status(401).json({
       status: 'error',
       error: 'unauthorized',

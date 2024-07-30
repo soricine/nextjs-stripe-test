@@ -6,6 +6,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { RegistrationData } from '@/types'
 import { registrationFormSchema } from '@/validations/registrationSchema'
 import { prisma } from '@/database/client'
+import { generateSalt } from '@/utils/server/generateSalt'
+import { hashPassword } from '@/utils/server/hashPassword'
 
 export default async function handler(
   req: NextApiRequest,
@@ -23,7 +25,12 @@ export default async function handler(
   }
 
   const response = registrationFormSchema.safeParse(req.body)
-
+  const registrationData = response.data as RegistrationData
+  const passwordSalt = await generateSalt()
+  const hashedPassword = await hashPassword({
+    password: registrationData.password,
+    salt: passwordSalt,
+  })
   if (!response.success) {
     const { errors } = response.error
 
@@ -35,12 +42,11 @@ export default async function handler(
     })
   }
 
-  const registrationData = response.data as RegistrationData
-  //prisma must be in a new function
   const user = await prisma.user.create({
     data: {
       email: registrationData.email,
-      password: registrationData.password,
+      hashedPassword,
+      passwordSalt,
     },
   })
   return res.json({
