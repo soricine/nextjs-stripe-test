@@ -10,8 +10,6 @@ import Link from 'next/link'
 import { Form } from './ui/Form'
 import { registrationFormSchema } from '@/validations/signin'
 import { useRouter } from 'next/router'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import '../ui/LoginModule.scss'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -75,14 +73,6 @@ export default function SubmitForm() {
             placeholder="example@email.com"
             control={form.control}
           ></LabelInput>
-          {/* <span className="eye_ison">
-            {
-              <FontAwesomeIcon
-                icon={showPassword ? 'eye-slash' : 'eye'}
-                onClick={() => setShowPassword(!showPassword)}
-              />
-            }
-          </span> */}
           <LabelInput
             name="password"
             description="insert your Password"
