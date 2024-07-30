@@ -10,8 +10,10 @@ generator client {
 model User {
   id       String  @id @default(uuid())
   email    String  @unique
-  password String
   oauthTokens OAuthToken[]
+  hashedPassword String @default("unInitialazed")
+  passwordSalt String@default("unInitialazed")
+
 }
 
 model OAuthToken{

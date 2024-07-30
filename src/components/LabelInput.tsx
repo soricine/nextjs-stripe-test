@@ -17,10 +17,12 @@ export type Props = {
   password?: string
   confirmPassword?: string
   control: any
+  type?: string
 }
 
 export default function LabelInput(params: Props) {
   const {
+    type,
     description,
     name,
     label,
@@ -38,7 +40,12 @@ export default function LabelInput(params: Props) {
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} {...props} />
+            <Input
+              placeholder={placeholder}
+              type={type}
+              {...field}
+              {...props}
+            />
           </FormControl>
           <FormDescription>{description}</FormDescription>
           <FormMessage />

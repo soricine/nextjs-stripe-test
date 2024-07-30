@@ -6,15 +6,16 @@ import { delay } from '@/lib/delay'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import Link from 'next/link'
 import { Form } from './ui/Form'
 import { registrationFormSchema } from '@/validations/signin'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const form = useForm<z.infer<typeof registrationFormSchema>>({
     resolver: zodResolver(registrationFormSchema),
@@ -41,11 +42,11 @@ export default function SubmitForm() {
       console.log(resultJson)
       setSubmitError(true)
       setIsLoading(false)
+      form.reset()
       return
     }
     const resultJson = await result.json()
     const token = resultJson.data.token
-    // console.log(token)
     localStorage.setItem('OAuthToken', token)
     console.log(resultJson)
 
@@ -54,10 +55,15 @@ export default function SubmitForm() {
     form.reset()
     router.push('/account')
   }
-
   return (
     <div>
-      {submitError && <div>Error !!!</div>}
+      {submitError && (
+        <div>
+          <br />
+          <b>Wrong Email or Password</b> <br />
+          <br />
+        </div>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <LabelInput
@@ -72,13 +78,17 @@ export default function SubmitForm() {
             description="insert your Password"
             label="Password"
             placeholder="123qwe"
+            type="password"
             control={form.control}
           ></LabelInput>
           <Button disabled={isLoading} type="submit">
-            {/* <Link href="/account" passHref={true}></Link> */}
             {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
             Submit
           </Button>
+          <br />
+          <Link href="/submit">
+            <b>Forgot Password</b>
+          </Link>
         </form>
       </Form>
     </div>
