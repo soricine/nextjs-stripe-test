@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Form } from './ui/Form'
 import { registrationFormSchema } from '@/validations/registrationSchema'
+import Link from 'next/link'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
@@ -65,6 +66,7 @@ export default function SubmitForm() {
             description="insert your Password"
             label="Password"
             placeholder="123qwe"
+            type="password"
             control={form.control}
           ></LabelInput>
           <LabelInput
@@ -72,6 +74,7 @@ export default function SubmitForm() {
             description="insert again the same Password"
             label="Confirm Password"
             placeholder="Same as Password"
+            type="password"
             control={form.control}
           ></LabelInput>
           <Button disabled={isLoading} type="submit">
@@ -79,6 +82,9 @@ export default function SubmitForm() {
             Submit
           </Button>
         </form>
+        <Link href="/signin">
+          <b>Sign In Page</b>
+        </Link>
       </Form>
     </div>
   )

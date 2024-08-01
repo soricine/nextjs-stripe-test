@@ -25,3 +25,9 @@ export type VerifyUserLoginApiData = {
 export type OAuthTokenWithUser = OAuthToken & {
   user: Partial<User>
 }
+
+export type NewPasswordData = {
+  verificationCode: string
+  email: string
+  password: string
+}

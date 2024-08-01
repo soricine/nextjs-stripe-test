@@ -6,64 +6,53 @@ import { delay } from '@/lib/delay'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import Link from 'next/link'
 import { Form } from './ui/Form'
-import { registrationFormSchema } from '@/validations/signin'
-import { useRouter } from 'next/router'
+import { newPasswd } from '@/validations/newPasswd'
+import Link from 'next/link'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState<boolean>(false)
 
-  const form = useForm<z.infer<typeof registrationFormSchema>>({
-    resolver: zodResolver(registrationFormSchema),
+  const form = useForm<z.infer<typeof newPasswd>>({
+    resolver: zodResolver(newPasswd),
     defaultValues: {
       email: '',
+      verificationCode: '',
       password: '',
+      confirmPassword: '',
     },
   })
-  const router = useRouter()
-  const onSubmit = async (values: z.infer<typeof registrationFormSchema>) => {
+
+  const onSubmit = async (values: z.infer<typeof newPasswd>) => {
     setSubmitted(false)
     setSubmitError(false)
     setIsLoading(true)
     // await delay(2000)
 
-    const result = await fetch('/api/signin', {
+    const result = await fetch('/api/newPasswd', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
     })
     if (result.status !== 200) {
-      const resultJson = await result.json()
-
-      console.log(resultJson)
       setSubmitError(true)
       setIsLoading(false)
-      form.reset()
       return
     }
     const resultJson = await result.json()
-    const token = resultJson.data.token
-    localStorage.setItem('OAuthToken', token)
     console.log(resultJson)
 
     setSubmitted(true)
     setIsLoading(false)
     form.reset()
-    router.push('/account')
   }
+
   return (
     <div>
-      {submitError && (
-        <div>
-          <br />
-          <b>Wrong Email or Password</b> <br />
-          <br />
-        </div>
-      )}
+      {submitted && <div>Thank for Register</div>}
+      {submitError && <div>Error !!!</div>}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <LabelInput
@@ -74,10 +63,25 @@ export default function SubmitForm() {
             control={form.control}
           ></LabelInput>
           <LabelInput
+            name="verificationCode"
+            description="insert verification Code here"
+            label="verificationCode"
+            placeholder="123"
+            control={form.control}
+          ></LabelInput>
+          <LabelInput
             name="password"
             description="insert your Password"
-            label="Password"
+            label="New Password"
             placeholder="123qwe"
+            type="password"
+            control={form.control}
+          ></LabelInput>
+          <LabelInput
+            name="confirmPassword"
+            description="insert again the same Password"
+            label="Confirm New Password"
+            placeholder="Same as New Password"
             type="password"
             control={form.control}
           ></LabelInput>
@@ -85,12 +89,12 @@ export default function SubmitForm() {
             {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
             Submit
           </Button>
-          <br />
-          <Link href="/forgotPassword">
-            <b>Forgot Password</b>
-          </Link>
         </form>
       </Form>
+      <br />
+      <Link href="/signin">
+        <b>Sign-in Page</b>
+      </Link>
     </div>
   )
 }
