@@ -8,17 +8,18 @@ generator client {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  oauthTokens OAuthToken[]
-  hashedPassword String @default("unInitialazed")
-  passwordSalt String@default("unInitialazed")
-
+  id                     String       @id @default(uuid())
+  email                  String       @unique
+  oauthTokens            OAuthToken[]
+  resetPasswordToken     String?
+  resetPasswordExpiresAt DateTime?
+  hashedPassword         String       @default("unInitialazed")
+  passwordSalt           String       @default("unInitialazed")
 }
 
-model OAuthToken{
-  token   String  @id 
-  expiresAt DateTime 
-  userId  String  
-  user   User @relation(fields: [userId], references: [id])
+model OAuthToken {
+  token     String   @id
+  expiresAt DateTime
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
 }

@@ -6,22 +6,19 @@ import { delay } from '@/lib/delay'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import Link from 'next/link'
 import { Form } from './ui/Form'
-import { registrationFormSchema } from '@/validations/signin'
+import { registrationFormSchema } from '@/validations/forgotPassw'
 import { useRouter } from 'next/router'
 
 export default function SubmitForm() {
   const [submitted, setSubmitted] = useState(false)
   const [submitError, setSubmitError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState<boolean>(false)
 
   const form = useForm<z.infer<typeof registrationFormSchema>>({
     resolver: zodResolver(registrationFormSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   })
   const router = useRouter()
@@ -30,8 +27,7 @@ export default function SubmitForm() {
     setSubmitError(false)
     setIsLoading(true)
     // await delay(2000)
-
-    const result = await fetch('/api/signin', {
+    const result = await fetch('/api/forgotPassword', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
@@ -46,21 +42,21 @@ export default function SubmitForm() {
       return
     }
     const resultJson = await result.json()
-    const token = resultJson.data.token
-    localStorage.setItem('OAuthToken', token)
-    console.log(resultJson)
+    // const token = resultJson.data.token
+    // localStorage.setItem('OAuthToken', token)
+    // console.log(resultJson)
 
     setSubmitted(true)
     setIsLoading(false)
     form.reset()
-    router.push('/account')
+    router.push('/newPasswordPage')
   }
   return (
     <div>
       {submitError && (
         <div>
           <br />
-          <b>Wrong Email or Password</b> <br />
+          <b>Wrong Email</b> <br />
           <br />
         </div>
       )}
@@ -73,22 +69,11 @@ export default function SubmitForm() {
             placeholder="example@email.com"
             control={form.control}
           ></LabelInput>
-          <LabelInput
-            name="password"
-            description="insert your Password"
-            label="Password"
-            placeholder="123qwe"
-            type="password"
-            control={form.control}
-          ></LabelInput>
           <Button disabled={isLoading} type="submit">
             {isLoading && <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />}
             Submit
           </Button>
           <br />
-          <Link href="/forgotPassword">
-            <b>Forgot Password</b>
-          </Link>
         </form>
       </Form>
     </div>
